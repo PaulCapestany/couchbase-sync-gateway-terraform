@@ -1,4 +1,4 @@
-This repo is meant to be an example of how to set up an auto-scaling cluster of Couchbase and Sync Gateway nodes running behind Nginx.
+This repo is meant to be an example of how to easily set up an auto-scaling cluster of CoreOS machines running Couchbase and Sync Gateway nodes behind Nginx on AWS using https://terraform.io/
 
 Do a search across all the files in the repo for "XXX" in order to place proper values in them. You'll want to grab a new etcd discovery URL over at https://discovery.etcd.io/new and place it into *cloud-config.yaml* ...the other replacements should be pretty self-explantory however.
 
