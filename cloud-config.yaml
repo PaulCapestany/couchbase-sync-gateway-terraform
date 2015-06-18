@@ -1,0 +1,60 @@
+#cloud-config
+
+write_files:
+  - path: /etc/systemd/system/docker.service.d/increase-ulimit.conf
+    owner: core:core
+    permissions: 0644
+    content: |
+      [Service]
+      LimitMEMLOCK=infinity
+  - path: /etc/systemd/system/fleet.socket.d/30-ListenStream.conf
+    owner: core:core
+    permissions: 0644
+    content: |
+      [Socket]
+      ListenStream=127.0.0.1:49153
+  - path: /opt/couchbase/var/.README
+    owner: core:core
+    permissions: 0644
+    content: |
+      Couchbase /opt/couchbase/var data volume in container mounted here
+  - path: /var/lib/cbfs/data/.README
+    owner: core:core
+    permissions: 0644
+    content: |
+      CBFS files are stored here
+  - path: /opt/bin/etcdctl-get-first
+    owner: core:core
+    permissions: 0744
+    content: |
+      etcdctl ls $1 | head -n1 | awk -F/ '{print $4}'
+  - path: /opt/bin/couchbase-server-ip
+    owner: core:core
+    permissions: 0744
+    content: |
+      MAX_ATTEMPTS=50
+      SLEEP_SECS=10
+      num_attempts=0
+      COUCHBASE_SERVER_IP=$(/opt/bin/etcdctl-get-first /couchbase.com/couchbase-node-state)
+      while [ -z \"$COUCHBASE_SERVER_IP\" ]; do
+        sleep $SLEEP_SECS
+        num_attempts=$((num_attempts+1))
+        if [[ \"$num_attempts\" -gt \"$MAX_ATTEMPTS\" ]]; then
+          echo \"Failed to get couchbase ip after $MAX_ATTEMPTS attempts\"
+          exit 1
+        fi
+        COUCHBASE_SERVER_IP=$(/opt/bin/etcdctl-get-first /couchbase.com/couchbase-node-state)
+      done
+      echo $COUCHBASE_SERVER_IP      
+coreos:
+  etcd:
+    discovery: https://discovery.etcd.io/XXX_NEW_ETCD_DISCOVERY_URL_XXX
+    addr: $private_ipv4:4001
+    peer-addr: $private_ipv4:7001
+  units:
+    - name: etcd.service
+      command: start
+    - name: fleet.service
+      command: start
+    - name: docker.service
+      command: restart
