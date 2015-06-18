@@ -1,3 +1,5 @@
+This repo is meant to be an example of how to set up an auto-scaling cluster of Couchbase and Sync Gateway nodes running behind Nginx.
+
 Do a search across all the files in the repo for "XXX" in order to place proper values in them. You'll want to grab a new etcd discovery URL over at https://discovery.etcd.io/new and place it into *cloud-config.yaml* ...the other replacements should be pretty self-explantory however.
 
 To spin up your cluster, make sure you `cd` into this project's directory, then run `terraform apply`
@@ -23,3 +25,9 @@ sudo docker run --net=host tleyden5iwx/couchbase-cluster-go update-wrapper sync-
   --create-bucket-size 200 \
   --create-bucket-replicas 1 
   ```
+
+Here's a helpful command to sanity check the state of things in your cluster:
+
+`docker ps -a && echo "" && fleetctl list-unit-files && echo "" && fleetctl list-units && echo "" && etcdctl ls / --recursive`
+
+To completely destroy the cluster, just run `terraform destroy -force`
