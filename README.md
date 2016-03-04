@@ -1,8 +1,8 @@
-This repo is meant to be an example of how to easily set up an auto-scaling cluster of CoreOS machines running Couchbase and Sync Gateway nodes behind Nginx on AWS using https://terraform.io/
+This repo is meant to be an example of how to easily set up an auto-scaling cluster of [CoreOS](https://coreos.com/) machines running [Couchbase](http://www.couchbase.com/nosql-databases/couchbase-server) and [Sync Gateway](https://github.com/couchbase/sync_gateway) in [Docker](https://www.docker.com/) containers behind Nginx on AWS using [Terraform](https://terraform.io/).
 
 You may want to check out the README at [couchbase-cluster-go](https://github.com/tleyden/couchbase-cluster-go) for more background info.
 
-Do a search across all the files in the repo for "XXX" in order to place proper values in them. You'll want to grab a new etcd discovery URL over at https://discovery.etcd.io/new and place it into *cloud-config.yaml* ...the other replacements should be pretty self-explantory however. You'd likely also want to do a find and replace for the AMI since they're constantly being updated.
+Do a search across all the files in the repo for "XXX" in order to place proper values in them. You'll want to grab a new etcd discovery URL over at https://discovery.etcd.io/new and place it into *cloud-config.yaml* ...the other replacements should be pretty self-explanatory however. You'd likely also want to do a find and replace for the AMI since they're constantly being updated.
 
 To spin up your cluster, make sure you `cd` into this project's directory, then run `terraform apply`
 
