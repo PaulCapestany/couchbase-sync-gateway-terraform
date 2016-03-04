@@ -1,16 +1,20 @@
+# Example of simplified DevOps using Terraform
+
 This repo is meant to be an example of how to easily set up an auto-scaling cluster of [CoreOS](https://coreos.com/) machines running [Couchbase](http://www.couchbase.com/nosql-databases/couchbase-server) and [Sync Gateway](https://github.com/couchbase/sync_gateway) in [Docker](https://www.docker.com/) containers behind Nginx on AWS using [Terraform](https://terraform.io/).
 
 You may want to check out the README at [couchbase-cluster-go](https://github.com/tleyden/couchbase-cluster-go) for more background info.
 
-Do a search across all the files in the repo for "XXX" in order to place proper values in them. You'll want to grab a new etcd discovery URL over at https://discovery.etcd.io/new and place it into *cloud-config.yaml* ...the other replacements should be pretty self-explanatory however. You'd likely also want to do a find and replace for the AMI since they're constantly being updated.
+## Usage
+
+Do a search across all the files in the repo for "XXX" in order to place proper values in them. You'll want to grab a new etcd discovery URL over at https://discovery.etcd.io/new and place it into *cloud-config.yaml* ...the other replacements should be pretty self-explanatory however. You'd likely also want to use an updated HVM [AMI](https://coreos.com/os/docs/latest/booting-on-ec2.html) to avoid immediate self-updates if you just want to quickly kick the tires.
 
 To spin up your cluster, make sure you `cd` into this project's directory, then run `terraform apply`
 
-Check on the status of your machines over at https://console.aws.amazon.com/ec2/v2/home, and once they're up log in with (putting in proper path to your .pem file, and proper IP for a machine in your newly spun up cluster):
+Check on the status of your machines over at https://console.aws.amazon.com/ec2/v2/home, and once they're up log in (making sure to put in the proper path to your .pem file, and a proper IP for a machine in your newly spun up cluster):
 
 `ssh -o StrictHostKeyChecking=no -i /XXX_PATH_TO_AWS_PEM_FILE_XXX/aws.pem -A core@XXX_AWS_IP_XXX`
 
-Once you've SSHed in, run (using your own Sync Gateway config file):
+Once you've SSHed in, run the following (making sure to use your own Sync Gateway config file):
 
 ```
 etcdctl set /couchbase.com/enable-code-refresh true && \
@@ -32,4 +36,6 @@ Here's a helpful command to sanity check the state of things in your cluster:
 
 `docker ps -a && echo "" && fleetctl list-unit-files && echo "" && fleetctl list-units && echo "" && etcdctl ls / --recursive`
 
-To completely destroy the cluster, just run `terraform destroy -force`
+## Avoid unexpected AWS bills
+
+***IMPORTANT:*** to completely destroy the cluster, run `terraform destroy -force`, otherwise you might get an unexpectedly more expensive AWS bill.
